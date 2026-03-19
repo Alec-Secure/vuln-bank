@@ -13,6 +13,8 @@ on:
 
 permissions:
   contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
   mend-sca:
@@ -33,12 +35,13 @@ jobs:
 
       - name: Download Mend CLI
         run: |
-          curl -fsSL https://downloads.mend.io/cli/linux_amd64/mend -o /usr/local/bin/mend
-          chmod +x /usr/local/bin/mend
+          curl -fsSL https://downloads.mend.io/cli/linux_amd64/mend -o ./mend
+          chmod +x ./mend
+          echo "$PWD" >> "$GITHUB_PATH"
 
       - name: Run Mend SCA scan
         env:
           MEND_EMAIL: ${{ secrets.MEND_EMAIL }}
           MEND_USER_KEY: ${{ secrets.MEND_USER_KEY }}
           MEND_URL: https://saas.mend.io
-        run: mend dep -s ./**/requirements.txt --non-interactive --extended
+        run: mend dep -s ./requirements.txt --non-interactive --extended
